@@ -1,7 +1,7 @@
 var current_switch_state = true;
 
 function ajax (path, method, async, listener) {
-	var xhr = new XMLHtpRequest();
+	var xhr = new XMLHttpRequest();
 	xhr.open(method, path, async);
 	xhr.onreadystatechange = function () {
 		listener(xhr);
