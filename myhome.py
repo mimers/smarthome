@@ -22,7 +22,7 @@ def light_state(op=None):
   elif op == 'set':
     GPIO.output(LIGHT_PIN, request.args.get('on', 0))
   else:
-    print 'unkown operate'
+    print 'unkown operation.'
 
 
     
