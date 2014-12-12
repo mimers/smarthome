@@ -1,6 +1,10 @@
-from flask import Flask
+from flask import Flask, request
 from flask import render_template
 import RPi.GPIO as GPIO
+
+LIGHT_PIN = 21
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(LIGHT_PIN, GPIO.OUT)
 
 app = Flask(__name__, static_url_path='')
 
@@ -9,10 +13,13 @@ app = Flask(__name__, static_url_path='')
 def hello(name=None):
   return render_template('index.html', name=name)
 
-@app.route('/light/state/<name>')
+@app.route('/light/state/<op>')
 def light_state(op=None)
   if op == 'get':
-    return GPIO.input(21)
+    return GPIO.input(LIGHT_PIN)
+  elif op == 'set':
+    GPIO.output(LIGHT_PIN, request.args.get('on', 0))
+
 
     
 
