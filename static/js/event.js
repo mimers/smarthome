@@ -38,8 +38,8 @@ function set_light_state (state, listener) {
 
 document.addEventListener("DOMContentLoaded", function () {
 	get_light_state(function (state) {
+		document.getElementById('start-overlay').style.display="none";
 		switch_light_ui(state == "1");
-		getElementById('start-overlay').style.display="none";
 		document.getElementById('light-switch').onclick = function (event) {
 			current_switch_state = !current_switch_state;
 			set_light_state(current_switch_state);
