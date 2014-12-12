@@ -1,16 +1,18 @@
 from flask import Flask
-app = Flask(__name__)
+from flask import render_template
+
+app = Flask(__name__, static_url_path='')
 
 @app.route('/')
-def hello():
-  return 'hi, i am smart home from the future'
+@app.route('/hello/<name>')
+def hello(name=None):
+  return render_template('index.html', name=name)
 
-@app.route('/favicon.ico')
-def favicon():
-  return send_from_directory(filename='favicon.ico')
-
+@app.route('/static/favicon.ico')
+def send_favicon():
+  return app.send_static_file('static/favicon.ico')
 
 if __name__ == '__main__':
-  app.run(host='0.0.0.0', port=3568)
+  app.run(debug=True, host='0.0.0.0', port=3568)
 
 
