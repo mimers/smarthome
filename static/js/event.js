@@ -28,7 +28,7 @@ function get_light_state (listener) {
 }
 
 function set_light_state (state, listener) {
-	simple_get("light/state/set?on="+state?"1":"0", function (xhr) {
+	simple_get("light/state/set?on="+(state?"1":"0"), function (xhr) {
 		if (xhr.readyState == 4 && xhr.status == 200) {
 			current_switch_state = state;
 			switch_light_ui(current_switch_state);
