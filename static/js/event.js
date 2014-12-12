@@ -19,7 +19,7 @@ function switch_light_ui (light_on) {
 }
 
 function get_light_state (listener) {
-	simple_get("/light/state", function (xhr) {
+	simple_get("/light/state/get", function (xhr) {
 		if (xhr.readyState == 4 && xhr.status == 200) {
 			var state = xhr.responseText;
 			listener(state);
