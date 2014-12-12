@@ -18,11 +18,13 @@ def hello(name=None):
 @app.route('/light/state/<op>')
 def light_state(op=None):
   if op == 'get':
-    return GPIO.input(LIGHT_PIN)
+    return str(GPIO.input(LIGHT_PIN))
   elif op == 'set':
     GPIO.output(LIGHT_PIN, request.args.get('on', 0))
+    return ''
   else:
     print 'unkown operation.'
+    return ''
 
 
     
