@@ -1,5 +1,6 @@
 from flask import Flask
 from flask import render_template
+import RPi.GPIO as GPIO
 
 app = Flask(__name__, static_url_path='')
 
@@ -8,9 +9,12 @@ app = Flask(__name__, static_url_path='')
 def hello(name=None):
   return render_template('index.html', name=name)
 
-@app.route('/static/favicon.ico')
-def send_favicon():
-  return app.send_static_file('static/favicon.ico')
+@app.route('/light/state/<name>')
+def light_state(op=None)
+  if op == 'get':
+    return GPIO.input(21)
+
+    
 
 if __name__ == '__main__':
   app.run(debug=True, host='0.0.0.0', port=3568)
