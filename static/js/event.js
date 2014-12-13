@@ -55,8 +55,8 @@ document.addEventListener("DOMContentLoaded", function () {
 		document.getElementById('start-overlay').style.display="none";
 		switch_light_ui(state == "1");
 		set_click_handler(document.getElementById('light-switch'), function (event) {
-			current_switch_state = !current_switch_state;
 			console.log('light-switch clicked, switch to state: '+current_switch_state)
+			// current_switch_state = !current_switch_state;
 			set_light_state(current_switch_state);
 		});
 	})
