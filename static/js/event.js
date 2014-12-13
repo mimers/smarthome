@@ -25,12 +25,14 @@ function simple_get (path, listener) {
 function switch_light_ui (light_on) {
 	document.getElementById('light-switch').setAttribute("on", light_on?"true":"false");
 	current_switch_state = light_on;
+	console.log('set light ui to '+light_on)
 }
 
 function get_light_state (listener) {
 	simple_get("/light/state/get", function (xhr) {
 		if (xhr.readyState == 4 && xhr.status == 200) {
 			var state = xhr.responseText;
+			console.log('got light state from server: '+state)
 			listener(state);
 		};
 	})
@@ -40,6 +42,7 @@ function set_light_state (state, listener) {
 	simple_get("light/state/set?on="+(state?"1":"0"), function (xhr) {
 		if (xhr.readyState == 4 && xhr.status == 200) {
 			current_switch_state = state;
+			console.log('send switch light command to server: '+state)
 			switch_light_ui(current_switch_state);
 		};
 	})
@@ -51,6 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		switch_light_ui(state == "1");
 		set_click_handler(document.getElementById('light-switch'), function (event) {
 			current_switch_state = !current_switch_state;
+			console.log('light-switch clicked, switch to state: '+current_switch_state)
 			set_light_state(current_switch_state);
 		});
 	})
