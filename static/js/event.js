@@ -1,4 +1,9 @@
-var current_switch_state = true;
+var current_switch_state = 0;
+
+function is_state_on (state) {
+	return state == 1 || state == '1' || state == true;
+}
+
 var is_mobile = (navigator.userAgent.indexOf("Android")!=-1 || navigator.userAgent.indexOf("iPhone")!=-1)
 
 function set_click_handler (element, handler) {
@@ -33,7 +38,7 @@ function switch_light_ui (light_on) {
 function get_light_state (listener) {
 	simple_get("/light/state/get", function (xhr) {
 		if (xhr.readyState == 4 && xhr.status == 200) {
-			var state = xhr.responseText;
+			var state = parseInt(xhr.responseText);
 			console.log('got light state from server: '+state)
 			listener(state);
 		};
@@ -41,9 +46,8 @@ function get_light_state (listener) {
 }
 
 function set_light_state (state, listener) {
-	simple_get("light/state/set?on="+(state?"1":"0"), function (xhr) {
+	simple_get("light/state/set?on="+(state), function (xhr) {
 		if (xhr.readyState == 4 && xhr.status == 200) {
-			current_switch_state = state;
 			console.log('send switch light command to server: '+state)
 			switch_light_ui(current_switch_state);
 		};
@@ -53,9 +57,9 @@ function set_light_state (state, listener) {
 document.addEventListener("DOMContentLoaded", function () {
 	get_light_state(function (state) {
 		document.getElementById('start-overlay').style.display="none";
-		switch_light_ui(state == "1");
+		switch_light_ui(state);
 		set_click_handler(document.getElementById('light-switch'), function (event) {
-			current_switch_state = !current_switch_state;
+			current_switch_state = parseInt(current_switch_state)==0?1:0;
 			console.log('light-switch clicked, switch to state: '+current_switch_state)
 			set_light_state(current_switch_state);
 		});
