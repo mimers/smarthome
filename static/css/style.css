@@ -10,7 +10,7 @@
 }
 
 #light-switch:active{
-  -webkit-filter: scale(130%);
+  transform:scale(1.5)
 }
 
 #light-switch[on='true']{
