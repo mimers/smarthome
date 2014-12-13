@@ -1,4 +1,13 @@
 var current_switch_state = true;
+var is_mobile = (navigator.userAgent.indexof("Android")!=-1 || navigator.userAgent.indexof("iPhone")!=-1)
+
+function set_click_handler (element, handler) {
+	if (is_mobile) {
+		element.ontouchend = handler;
+	} else {
+		element.onclick = handler;
+	}
+}
 
 function ajax (path, method, async, listener) {
 	var xhr = new XMLHttpRequest();
@@ -40,9 +49,9 @@ document.addEventListener("DOMContentLoaded", function () {
 	get_light_state(function (state) {
 		document.getElementById('start-overlay').style.display="none";
 		switch_light_ui(state == "1");
-		document.getElementById('light-switch').onclick = function (event) {
+		set_click_handler(document.getElementById('light-switch'), function (event) {
 			current_switch_state = !current_switch_state;
 			set_light_state(current_switch_state);
-		}
+		});
 	})
 })

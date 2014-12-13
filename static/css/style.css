@@ -4,10 +4,16 @@
 	cursor: pointer;
 	transition: all 800ms ease;
 	border-radius: 64px;
-
+  width: 128px;
+  height: 128px;
+  background-image: url("/imgs/light-bubble.png");
 }
-#light-switch[on='true']{
 
+#light-switch:active{
+  -webkit-filter: scale(130%);
+}
+
+#light-switch[on='true']{
 	box-shadow: rgba(213, 99, 99, 0.77) -3px 0px 19px 4px;
 }
 
@@ -40,7 +46,7 @@ div#start-overlay {
     transition: all ease 600ms;
     display: inline-flex;
 }
-#start-overlay:active{
+div#start-overlay:active{
 	transform:scale(2.5)
 }
 img#loading {
