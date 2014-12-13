@@ -3,8 +3,10 @@ var is_mobile = (navigator.userAgent.indexOf("Android")!=-1 || navigator.userAge
 
 function set_click_handler (element, handler) {
 	if (is_mobile) {
+		console.log('device is mobile')
 		element.ontouchend = handler;
 	} else {
+		console.log('device is desktop computer')
 		element.onclick = handler;
 	}
 }
