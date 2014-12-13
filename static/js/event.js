@@ -1,5 +1,5 @@
 var current_switch_state = true;
-var is_mobile = (navigator.userAgent.Indexof("Android")!=-1 || navigator.userAgent.Indexof("iPhone")!=-1)
+var is_mobile = (navigator.userAgent.indexOf("Android")!=-1 || navigator.userAgent.indexOf("iPhone")!=-1)
 
 function set_click_handler (element, handler) {
 	if (is_mobile) {
