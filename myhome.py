@@ -21,41 +21,46 @@ print "prepare mongodb..."
 db = MongoClient("localhost:3550")["smart-home"]
 deviceStatus = {}
 
-class DeviceConnection():
+class DeviceConnection(dict):
   """Helper to communicate with ble devices"""
-  def __init__(self, addr):
+  def __init__(self, addr, name):
+    dict.__init__(self, addr=addr, name=name)
     self.addr = addr
     self.con = btle.Peripheral(addr).withDelegate(self)
-    self.characterristic = self.con.getCharacteristics()[-1]
-    self.writeValue('Q')
+    self.characteristic = self.con.getCharacteristics()[-1]
+    print "connected ", name, " using handle ", self.characteristic.getHandle()
+    self.getValue()
 
   def handleNotification(self, handle, data):
       print "Got notify @ ", self.addr, " data = (", data, ")"
       self.data = data
       self.online = True
+      self['value'] = data
+      self['online'] = self.online
 
   def getValue(self):
-    return self.characterristic.read()
+    self.writeValue('Q$')
+    return self.data
 
   def writeValue(self, val):
-    ret = self.characterristic.write(val)
+    ret = self.characteristic.write(val)
     self.con.waitForNotifications(3)
     return ret
 
-def connectDevice(addr):
+def connectDevice(addr, name=""):
   try:
-    deviceStatus[addr] = DeviceConnection(addr)
+    deviceStatus[addr] = DeviceConnection(addr, name)
     print "connect to ", addr, " succeed."
     return True
   except Exception as e:
-    print "connect to ", addr, " failed."
+    print "connect to ", addr, " failed. ", e
     return False
 
 def getValidName(scanEntry):
   if scanEntry is None:
     return ""
   name = ""
-  for (sdid, desc, val) in dev.getScanData():
+  for (sdid, desc, val) in scanEntry.getScanData():
       if sdid == COMPLETE_DATA_TAG:
           name = val
       elif sdid  == SHORT_DATA_TAG and name == "":
@@ -75,18 +80,18 @@ def hello():
 
 @app.route('/lights')
 def get_all_lights():
-  return json.dumps(deviceStatus)
+  return json.dumps(deviceStatus.values())
 
 @app.route('/connect/<addr>')
 def connect_to(addr):
-  return connectDevice(addr)
+  return json.dumps(connectDevice(addr))
 
 @app.route('/add/<addr>/<name>')
 def addDevice(addr, name):
   db.devices.insert({'addr': addr, 'name': name})
   if connectDevice(addr):
     return json.dumps(deviceStatus[addr])
-  else
+  else:
     return json.dumps({'msg': 'failed to connect ' + addr, 'code': -1})
 
 
@@ -102,6 +107,26 @@ def scan_blte():
       newDevices.append({'addr': entry.addr, 'name': getValidName(entry)})
   return json.dumps(newDevices)
 
+@app.route('/light/<op>/<addr>')
+def ble_op(op, addr):
+  try:
+      con = deviceStatus[addr]
+      print op, " @ ", addr
+      if op == 'set':
+        val = request.args.get('val', None)
+        if val is None:
+            return "false"
+        return json.dumps(con.writeValue(val))
+      elif op == 'get':
+        return json.dumps(con.getValue())
+      else:
+        return 'invalid params'
+  except Exception as e:
+      print e
+      return 'failed'
+
+
+
 @app.route('/light/state/<op>/<val>')
 def light_state(op=None, val="0"):
   if op == 'get':
@@ -114,4 +139,5 @@ def light_state(op=None, val="0"):
     return ''
 
 if __name__ == '__main__':
+  print "start server..."
   app.run(debug=True, host='0.0.0.0', port=3568)
