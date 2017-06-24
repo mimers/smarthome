@@ -116,7 +116,8 @@ def ble_op(op, addr):
         val = request.args.get('val', None)
         if val is None:
             return "false"
-        return json.dumps(con.writeValue(val))
+        con.writeValue(val)
+        return json.dumps(con.getValue())
       elif op == 'get':
         return json.dumps(con.getValue())
       else:
@@ -140,4 +141,4 @@ def light_state(op=None, val="0"):
 
 if __name__ == '__main__':
   print "start server..."
-  app.run(debug=True, host='0.0.0.0', port=3568)
+  app.run(debug=True, use_reloader=False, host='0.0.0.0', port=3568)
