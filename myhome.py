@@ -2,20 +2,13 @@
 
 from flask import Flask, request
 from flask import render_template
-import RPi.GPIO as GPIO
 from pymongo import MongoClient
 from bluepy import btle
 import json
+from flask_cors import CORS, cross_origin
 
-
-LIGHT_PIN = 21
 SHORT_DATA_TAG = 8
 COMPLETE_DATA_TAG = 9
-
-print "setup gpio..."
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(LIGHT_PIN, GPIO.OUT)
-GPIO.output(LIGHT_PIN, 1)
 
 print "prepare mongodb..."
 db = MongoClient("localhost:3550")["smart-home"]
@@ -70,9 +63,11 @@ def getValidName(scanEntry):
 
 print "prepare btle..."
 for d in db.devices.find():
-  connectDevice(d['addr'])
+  connectDevice(d['addr'], d['name'])
 
 app = Flask(__name__, static_url_path='')
+CORS(app)
+
 
 @app.route('/')
 def hello():
@@ -89,7 +84,7 @@ def connect_to(addr):
 @app.route('/add/<addr>/<name>')
 def addDevice(addr, name):
   db.devices.insert({'addr': addr, 'name': name})
-  if connectDevice(addr):
+  if connectDevice(addr, name):
     return json.dumps(deviceStatus[addr])
   else:
     return json.dumps({'msg': 'failed to connect ' + addr, 'code': -1})
@@ -106,6 +101,13 @@ def scan_blte():
       # new device detected!
       newDevices.append({'addr': entry.addr, 'name': getValidName(entry)})
   return json.dumps(newDevices)
+
+@app.route('/light/name/<addr>')
+def rename_dev(addr):
+  name = request.args.get('val', '')
+  db.devices.update({'addr': addr}, {'name': name}) 
+  deviceStatus[addr].name = name
+  return json.dumps(deviceStatus[addr]) 
 
 @app.route('/light/<op>/<addr>')
 def ble_op(op, addr):
@@ -126,9 +128,7 @@ def ble_op(op, addr):
       print e
       return 'failed'
 
-
-
-@app.route('/light/state/<op>/<val>')
+#@app.route('/light/state/<op>/<val>')
 def light_state(op=None, val="0"):
   if op == 'get':
     return str(1 if 0 is GPIO.input(LIGHT_PIN) else 0)
