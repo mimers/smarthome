@@ -2,13 +2,49 @@
     <meta charset='utf-8' />
     <meta name="viewport" id="vp" content="initial-scale=1.0,user-scalable=no,maximum-scale=1,width=device-width">
     <title>Welcome to Smart Home</title>
+    <link rel="stylesheet" type="text/css" href="/css/material.min.css" />
+    <link rel="stylesheet" type="text/css" href="/css/material.indigo-pink.min.css" />
+    <script type="text/javascript" src="https://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/vconsole/2.5.1/vconsole.min.js"></script>
+    <script type="text/javascript" src="/js/vue.min.js"></script>
+    <script type="text/javascript" src="/js/material.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/css/style.css" />
     <script type="text/javascript" src="/js/event.js"></script>
 </head>
 
 <body>
     <h1>Smart Home</h1>
-    <div id="light-switch" />
-    <div id="start-overlay"><img id="loading" src="/imgs/loading.gif">
+    <div id="smart-container">
+        <div id="start-overlay" v-if="!ready">
+            <img id="loading" src="/imgs/loading.gif">
+        </div>
+        <div class="smart-lights" v-if="ready">
+            <div v-for="(light, index) in lights" class="light" v-bind:class="{online : light.online}">
+                <span v-on:click="updateName(index)" class="name">{{light.name ? light.name : "还没有名字呢"}}</span>
+                <span class="addr">{{light.addr}}</span>
+                <span class="switch-container">
+	                <label style="width: initial;" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" v-bind:for="'switch-' + index">
+	                    <input v-model="light.on" v-on:click="toggleLightSwitch(index)" type="checkbox" v-bind:id="'switch-' + index" class="mdl-switch__input">
+	                </label>
+                </span>
+            </div>
+        </div>
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent add-dev" v-on:click="addDevice">
+            添加设备
+        </button>
     </div>
+    <dialog id="scan-dialog" class="mdl-dialog">
+        <span class="scan-title mdl-dialog__title">宝宝，选择要添加的设备吧！</span>
+        <div class="mdl-dialog__content">
+            <p>
+                <div v-if="scaning" class="mdl-spinner mdl-js-spinner is-active"></div>
+                <div v-for="(light, index) in lights" v-on:click="selectScan(index)">
+                    <span class="name">{{light.name}}</span>
+                    <span class="scan-addr">{{light.addr}}</span>
+                </div>
+            </p>
+        </div>
+        <div class="mdl-dialog__actions">
+            <button v-on:click="closeDialog" type="button" class="mdl-button">算了</button>
+        </div>
+    </dialog>
 </body>
