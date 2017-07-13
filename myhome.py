@@ -46,7 +46,8 @@ def connectDevice(addr, name=""):
     print "connect to ", addr, " succeed."
     return True
   except Exception as e:
-    print "connect to ", addr, " failed. ", e
+    if deviceStatus[addr] == None:
+      print "connect to ", addr, " failed. ", e
     return False
 
 def getValidName(scanEntry):
@@ -75,6 +76,9 @@ def hello():
 
 @app.route('/lights')
 def get_all_lights():
+  for addr in deviceStatus.keys():
+    connectDevice(addr, deviceStatus[addr]['name'])
+    pass
   return json.dumps(deviceStatus.values())
 
 @app.route('/connect/<addr>')
