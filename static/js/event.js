@@ -63,6 +63,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 });
             },
             scanBle: function() {
+				this.lights = [];
                 document.querySelector("#scan-dialog").showModal();
                 this.scaning = true;
                 simple_get("/scan", {

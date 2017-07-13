@@ -63,7 +63,17 @@ span.switch-container {
 	margin-right: 30px;
 }
 
-dialog.scan-dialog {
+#scan-dialog {
 	position: fixed;
 	top: 114px;
+	width: 80%;
+	display: none;
+}
+
+#scan-dialog > div > div {
+	margin: 20px;
+	background-color: lightgray;
+	border-radius: 10px;
+	box-shadow: gray 1px 1px 10px 0px;
+	padding: 8px;
 }
