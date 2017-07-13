@@ -23,7 +23,7 @@
                 <span class="addr">{{light.addr}}</span>
                 <span class="switch-container">
 	                <label style="width: initial;" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" v-bind:for="'switch-' + index">
-	                    <input v-model="light.on" v-on:click="toggleLightSwitch(index)" type="checkbox" v-bind:id="'switch-' + index" class="mdl-switch__input">
+	                    <input v-model="light.on" v-on:change="toggleLightSwitch(index)" type="checkbox" v-bind:id="'switch-' + index" class="mdl-switch__input">
 	                </label>
                 </span>
             </div>
@@ -43,7 +43,7 @@
                 </div>
             </p>
         </div>
-        <div class="mdl-dialog__actions">
+        <div class="mdl-dialog__actions" >
             <button v-on:click="closeDialog" type="button" class="mdl-button">算了</button>
         </div>
     </dialog>

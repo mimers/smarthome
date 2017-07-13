@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 from flask import Flask, request
-from flask import render_template
+from flask import render_template, current_app
 from pymongo import MongoClient
 from bluepy import btle
 import json
@@ -71,7 +71,7 @@ CORS(app)
 
 @app.route('/')
 def hello():
-  return render_template('index.html')
+  return current_app.send_static_file('index.html')
 
 @app.route('/lights')
 def get_all_lights():

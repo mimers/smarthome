@@ -36,7 +36,6 @@ function get_lights(listener) {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-
     var scanVm = new Vue({
         el: "#scan-dialog",
         data: {
@@ -106,7 +105,8 @@ document.addEventListener("DOMContentLoaded", function() {
             },
             toggleLightSwitch: function(e) {
                 var light = this.lights[e];
-                simple_get("/light/set/" + light.addr + "?val=S" + (light.on ? 0 : 1) + "$", {
+				console.log(light);
+                simple_get("/light/set/" + light.addr + "?val=S" + (light.on ? 1 : 0) + "$", {
                     success: function(xhr) {
                         if (xhr.response === "N1") {
                             console.log("switch light on!");
@@ -130,6 +130,7 @@ document.addEventListener("DOMContentLoaded", function() {
             return lt;
         });
         setTimeout(vm.updateMDL, 0);
+		scanVm.closeDialog();
     });
 
 })
